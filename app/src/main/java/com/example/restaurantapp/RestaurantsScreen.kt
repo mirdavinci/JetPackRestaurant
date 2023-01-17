@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
@@ -16,14 +17,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun RestaurantScreen() {
+    val viewModel: RestaurantViewModel = viewModel()
     LazyColumn(
         Modifier.verticalScroll(rememberScrollState())
         /*rememberScrollState() => to save scroll state */
     ) {
-        dummyRestaurants.forEach { restaurant -> RestaurantItem(restaurant) }
+        items(viewModel.getRestaurants()) { restaurant ->
+            RestaurantItem(item = restaurant)
+        }
     }
 }
 
