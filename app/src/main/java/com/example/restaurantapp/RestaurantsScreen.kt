@@ -37,8 +37,6 @@ fun RestaurantItem(item: Restaurant) {
             RestaurantDetails(
                 item.title, item.description, Modifier.weight(0.85f),
             )
-
-
         }
     }
 }
