@@ -5,6 +5,7 @@ data class Restaurant(
     val title: String,
     val description: String,
     val isFavourite: Boolean
+
 )
 
 val dummyRestaurants = listOf(

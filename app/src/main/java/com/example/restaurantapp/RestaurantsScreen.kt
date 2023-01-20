@@ -41,6 +41,7 @@ fun RestaurantScreen() {
                 val item = restaurants[itemIndex]
                 restaurants[itemIndex] = item.copy(isFavourite = !item.isFavourite)
                 state.value = restaurants
+
             }
         }
     }
