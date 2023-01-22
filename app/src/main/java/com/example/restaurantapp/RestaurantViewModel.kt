@@ -5,10 +5,7 @@ import androidx.lifecycle.ViewModel
 
 class RestaurantViewModel() : ViewModel() {
 
-    private val state = mutableStateOf(dummyRestaurants)
-
-
-    fun getRestaurants() = dummyRestaurants
+    val state = mutableStateOf(dummyRestaurants)
 
     fun toggleFavourite(id: Int) {
         val restaurants = state.value.toMutableList()

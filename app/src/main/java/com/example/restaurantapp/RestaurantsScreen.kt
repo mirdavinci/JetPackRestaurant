@@ -23,24 +23,14 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun RestaurantScreen() {
-
-
     val viewModel: RestaurantViewModel = viewModel()
-    val state: MutableState<List<Restaurant>> =
-        remember {
-            mutableStateOf(viewModel.getRestaurants())
-        }
     LazyColumn(
         Modifier.verticalScroll(rememberScrollState())
         /*rememberScrollState() => to save scroll state */
     ) {
-        items(state.value) { restaurant ->
+        items(viewModel.state.value) { restaurant ->
             RestaurantItem(restaurant) { id ->
-                val restaurants = state.value.toMutableList()
-                val itemIndex = state.value.indexOfFirst { it.id == id }
-                val item = restaurants[itemIndex]
-                restaurants[itemIndex] = item.copy(isFavourite = !item.isFavourite)
-                state.value = restaurants
+                viewModel.toggleFavourite(id)
 
             }
         }
