@@ -32,6 +32,6 @@ class RestaurantViewModel(private val stateHandle: SavedStateHandle) : ViewModel
      but not to the instance of that class —
      basically like the “static” keyword in Java but with a twist.  */
     companion object {
-        const val FAVOURITES = "favorites"
+        const val FAVOURITES = "favourites"
     }
 }
