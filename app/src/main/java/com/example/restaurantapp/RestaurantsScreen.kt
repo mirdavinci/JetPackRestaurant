@@ -1,14 +1,12 @@
 package com.example.restaurantapp
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -25,7 +23,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 fun RestaurantScreen() {
     val viewModel: RestaurantViewModel = viewModel()
     LazyColumn(
-        Modifier.verticalScroll(rememberScrollState())
+//        Modifier.horizontalScroll(rememberScrollState())
         /*rememberScrollState() => to save scroll state */
     ) {
         items(viewModel.state.value) { restaurant ->
