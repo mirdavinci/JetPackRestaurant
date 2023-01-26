@@ -15,18 +15,39 @@ class RestaurantViewModel(private val stateHandle: SavedStateHandle) : ViewModel
         val item = restaurants[itemIndex]
 
         storeSelection(item)
+        dummyRestaurants.restoreSelections()
         restaurants[itemIndex] = item.copy(isFavourite = !item.isFavourite)
         state.value = restaurants
     }
 
     private fun storeSelection(item: Restaurant) {
         val savedToggleId = stateHandle.get<List<Int>>(FAVOURITES).orEmpty().toMutableList()
-        if (item.isFavourite)
-            savedToggleId.add(item.id)
-        else
-            savedToggleId.remove(item.id)
+        if (item.isFavourite) savedToggleId.add(item.id)
+        else savedToggleId.remove(item.id)
         stateHandle[FAVOURITES] = savedToggleId
     }
+
+    private fun List<Restaurant>.restoreSelections():
+            List<Restaurant> {
+        /*
+        let is often used for executing a code block
+        only with non-null values.
+        To perform actions on a non-null object,
+        use the safe call operator ?. on it and call
+        "let" with the actions in its lambda.
+        Another case for using let is introducing local variables
+        with a limited scope for improving code readability.
+        */
+        stateHandle.get<List<Int>?>(FAVOURITES)?.let { selectedIds ->
+            val restaurantsMap = this.associateBy { it.id }
+            selectedIds.forEach { id ->
+                restaurantsMap[id]?.isFavourite = true
+            }
+            return restaurantsMap.values.toList()
+        }
+        return this
+    }
+
 
     /* companion objects are singleton objects whose properties and functions are tied to a class
      but not to the instance of that class —

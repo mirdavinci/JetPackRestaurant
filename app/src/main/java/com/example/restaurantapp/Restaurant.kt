@@ -4,7 +4,7 @@ data class Restaurant(
     val id: Int,
     val title: String,
     val description: String,
-    val isFavourite: Boolean
+    var isFavourite: Boolean
 
 )
 
