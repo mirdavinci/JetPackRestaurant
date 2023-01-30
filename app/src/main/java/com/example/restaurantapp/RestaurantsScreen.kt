@@ -22,6 +22,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 @Composable
 fun RestaurantScreen() {
     val viewModel: RestaurantViewModel = viewModel()
+    viewModel.getRestaurants()
     LazyColumn(
 //        Modifier.horizontalScroll(rememberScrollState())
         /*rememberScrollState() => to save scroll state */

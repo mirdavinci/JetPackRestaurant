@@ -3,6 +3,9 @@ package com.example.restaurantapp
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -18,17 +21,29 @@ class RestaurantViewModel(private val stateHandle: SavedStateHandle) : ViewModel
         restInterface = retrofit.create(RestaurantsApiService::class.java)
     }
 
-    fun getRestaurants() {
-        restInterface.getRestaurants().execute().body()?.let {
 
-// The body() accessor returns a nullable list of type List<Restaurant>>?.
-                restaurants ->
-            state.value = restaurants.restoreSelections()
-        }
+    fun getRestaurants() {
+        restInterface.getRestaurants().enqueue(
+            object : Callback<List<Restaurant>>{
+                override fun onResponse(
+                    call: Call<List<Restaurant>>,
+                    response: Response<List<Restaurant>>
+                ) {
+                    response.body()?.let {
+                        restaurants ->
+                        state.value = restaurants.restoreSelections()
+                    }
+                }
+
+                override fun onFailure(call: Call<List<Restaurant>>, t: Throwable) {
+                    t.printStackTrace()
+
+                }
+            }
+        )
     }
 
-
-    val state = mutableStateOf(dummyRestaurants.restoreSelections())
+    val  state = mutableStateOf(emptyList<Restaurant>())
     fun toggleFavourite(id: Int) {
         val restaurants = state.value.toMutableList()
         val itemIndex = restaurants.indexOfFirst { it.id == id }
@@ -36,7 +51,7 @@ class RestaurantViewModel(private val stateHandle: SavedStateHandle) : ViewModel
         val item = restaurants[itemIndex]
 
         storeSelection(item)
-        dummyRestaurants.restoreSelections()
+//        dummyRestaurants.restoreSelections()
         restaurants[itemIndex] = item.copy(isFavourite = !item.isFavourite)
         state.value = restaurants
     }
