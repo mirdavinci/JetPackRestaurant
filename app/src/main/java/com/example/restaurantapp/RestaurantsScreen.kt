@@ -22,6 +22,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 @Composable
 fun RestaurantScreen() {
     val viewModel: RestaurantViewModel = viewModel()
+    LaunchedEffect(key1 = "request restaurants"){
+        viewModel.getRestaurants()
+    }
     viewModel.getRestaurants()
     LazyColumn(
 //        Modifier.horizontalScroll(rememberScrollState())

@@ -13,37 +13,49 @@ class RestaurantViewModel(private val stateHandle: SavedStateHandle) : ViewModel
 
     private var restInterface: RestaurantsApiService
 
+    private lateinit var restaurantsCall: Call<List<Restaurant>>
+
     init {
         val retrofit: Retrofit =
             Retrofit.Builder().addConverterFactory(GsonConverterFactory.create())
                 .baseUrl("https://restaurants-db-default-rtdb.firebaseio.com/").build()
 
+
         restInterface = retrofit.create(RestaurantsApiService::class.java)
+
+        getRestaurants()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        restaurantsCall.cancel()
     }
 
 
     fun getRestaurants() {
-        restInterface.getRestaurants().enqueue(
-            object : Callback<List<Restaurant>>{
-                override fun onResponse(
-                    call: Call<List<Restaurant>>,
-                    response: Response<List<Restaurant>>
-                ) {
-                    response.body()?.let {
-                        restaurants ->
-                        state.value = restaurants.restoreSelections()
-                    }
-                }
 
-                override fun onFailure(call: Call<List<Restaurant>>, t: Throwable) {
-                    t.printStackTrace()
-
+        restaurantsCall = restInterface.getRestaurants()
+        restaurantsCall.enqueue(object : Callback<List<Restaurant>> {
+            override fun onResponse(
+                call: Call<List<Restaurant>>,
+                response: Response<List<Restaurant>>
+            ) {
+                response.body()?.let { restaurants ->
+                    state.value = restaurants.restoreSelections()
                 }
             }
-        )
+
+            override fun onFailure(call: Call<List<Restaurant>>, t: Throwable) {
+                t.printStackTrace()
+            }
+        })
+
+//        restInterface.getRestaurants().enqueue(
+//            object :
+//        )
     }
 
-    val  state = mutableStateOf(emptyList<Restaurant>())
+    val state = mutableStateOf(emptyList<Restaurant>())
     fun toggleFavourite(id: Int) {
         val restaurants = state.value.toMutableList()
         val itemIndex = restaurants.indexOfFirst { it.id == id }
