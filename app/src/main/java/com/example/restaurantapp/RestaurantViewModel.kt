@@ -18,7 +18,7 @@ class RestaurantViewModel(private val stateHandle: SavedStateHandle) : ViewModel
     init {
         val retrofit: Retrofit =
             Retrofit.Builder().addConverterFactory(GsonConverterFactory.create())
-                .baseUrl("https://restaurants-db-default-rtdb.firebaseio.com/").build()
+                .baseUrl("https://restaurant-app-jetpack-default-rtdb.asia-southeast1.firebasedatabase.app/").build()
 
 
         restInterface = retrofit.create(RestaurantsApiService::class.java)
