@@ -3,6 +3,8 @@ package com.example.restaurantapp
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -13,12 +15,15 @@ class RestaurantViewModel(private val stateHandle: SavedStateHandle) : ViewModel
 
     private var restInterface: RestaurantsApiService
 
-    private lateinit var restaurantsCall: Call<List<Restaurant>>
+    val state = mutableStateOf(emptyList<Restaurant>())
+
+
 
     init {
         val retrofit: Retrofit =
             Retrofit.Builder().addConverterFactory(GsonConverterFactory.create())
-                .baseUrl("https://restaurant-app-jetpack-default-rtdb.asia-southeast1.firebasedatabase.app/").build()
+                .baseUrl("https://restaurant-app-jetpack-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                .build()
 
 
         restInterface = retrofit.create(RestaurantsApiService::class.java)
@@ -26,36 +31,32 @@ class RestaurantViewModel(private val stateHandle: SavedStateHandle) : ViewModel
         getRestaurants()
     }
 
+
+    private fun getRestaurants() {
+        ///Custom scope
+//        scope.launch {
+//            val restaurants = restInterface.getRestaurants()
+//            withContext(Dispatchers.Main) {
+//                state.value = restaurants.restoreSelections()
+//            }
+//        }
+        viewModelScope.launch(Dispatchers.IO) {
+            val restaurants = restInterface.getRestaurants()
+            withContext(Dispatchers.Main){
+                state.value = restaurants.restoreSelections()
+            }
+        }
+    }
+
+
+    private val job = Job()
+    private val scope = CoroutineScope(job + Dispatchers.IO)
+
     override fun onCleared() {
         super.onCleared()
-        restaurantsCall.cancel()
+        job.cancel()
     }
 
-
-    fun getRestaurants() {
-
-        restaurantsCall = restInterface.getRestaurants()
-        restaurantsCall.enqueue(object : Callback<List<Restaurant>> {
-            override fun onResponse(
-                call: Call<List<Restaurant>>,
-                response: Response<List<Restaurant>>
-            ) {
-                response.body()?.let { restaurants ->
-                    state.value = restaurants.restoreSelections()
-                }
-            }
-
-            override fun onFailure(call: Call<List<Restaurant>>, t: Throwable) {
-                t.printStackTrace()
-            }
-        })
-
-//        restInterface.getRestaurants().enqueue(
-//            object :
-//        )
-    }
-
-    val state = mutableStateOf(emptyList<Restaurant>())
     fun toggleFavourite(id: Int) {
         val restaurants = state.value.toMutableList()
         val itemIndex = restaurants.indexOfFirst { it.id == id }
