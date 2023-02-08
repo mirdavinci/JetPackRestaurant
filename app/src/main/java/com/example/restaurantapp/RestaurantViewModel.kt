@@ -17,6 +17,10 @@ class RestaurantViewModel(private val stateHandle: SavedStateHandle) : ViewModel
 
     val state = mutableStateOf(emptyList<Restaurant>())
 
+    private val errorHandler =
+        CoroutineExceptionHandler { _, exception ->
+            exception.printStackTrace()
+        }
 
 
     init {
@@ -32,6 +36,13 @@ class RestaurantViewModel(private val stateHandle: SavedStateHandle) : ViewModel
     }
 
 
+//    private val job = Job()
+//    private val scope = CoroutineScope(job + Dispatchers.IO)
+
+    //    override fun onCleared() {
+//        super.onCleared()
+//        job.cancel()
+//    }
     private fun getRestaurants() {
         ///Custom scope
 //        scope.launch {
@@ -40,22 +51,18 @@ class RestaurantViewModel(private val stateHandle: SavedStateHandle) : ViewModel
 //                state.value = restaurants.restoreSelections()
 //            }
 //        }
-        viewModelScope.launch(Dispatchers.IO) {
-            val restaurants = restInterface.getRestaurants()
-            withContext(Dispatchers.Main){
-                state.value = restaurants.restoreSelections()
+        try {
+            viewModelScope.launch(Dispatchers.IO + errorHandler) {
+                val restaurants = restInterface.getRestaurants()
+                withContext(Dispatchers.Main) {
+                    state.value = restaurants.restoreSelections()
+                }
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
-
-    private val job = Job()
-    private val scope = CoroutineScope(job + Dispatchers.IO)
-
-    override fun onCleared() {
-        super.onCleared()
-        job.cancel()
-    }
 
     fun toggleFavourite(id: Int) {
         val restaurants = state.value.toMutableList()
@@ -64,7 +71,6 @@ class RestaurantViewModel(private val stateHandle: SavedStateHandle) : ViewModel
         val item = restaurants[itemIndex]
 
         storeSelection(item)
-//        dummyRestaurants.restoreSelections()
         restaurants[itemIndex] = item.copy(isFavourite = !item.isFavourite)
         state.value = restaurants
     }
