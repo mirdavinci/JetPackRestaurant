@@ -43,7 +43,7 @@ class RestaurantViewModel(private val stateHandle: SavedStateHandle) : ViewModel
 //        super.onCleared()
 //        job.cancel()
 //    }
-    private fun getRestaurants() {
+    fun getRestaurants() {
         ///Custom scope
 //        scope.launch {
 //            val restaurants = restInterface.getRestaurants()
@@ -52,11 +52,12 @@ class RestaurantViewModel(private val stateHandle: SavedStateHandle) : ViewModel
 //            }
 //        }
         try {
-            viewModelScope.launch(Dispatchers.IO + errorHandler) {
-                val restaurants = restInterface.getRestaurants()
-                withContext(Dispatchers.Main) {
-                    state.value = restaurants.restoreSelections()
-                }
+            viewModelScope.launch(errorHandler) {
+                val restaurants = getRemoteRestaurants()
+//                withContext(Dispatchers.Main) {
+                ///Cuz viewModelScope by default run on Dispatchers.Main
+                state.value = restaurants.restoreSelections()
+//                }
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -109,5 +110,12 @@ class RestaurantViewModel(private val stateHandle: SavedStateHandle) : ViewModel
      basically like the “static” keyword in Java but with a twist.  */
     companion object {
         const val FAVOURITES = "favourites"
+    }
+
+
+    private suspend fun getRemoteRestaurants(): List<Restaurant> {
+        return withContext(Dispatchers.IO) {
+            restInterface.getRestaurants()
+        }
     }
 }

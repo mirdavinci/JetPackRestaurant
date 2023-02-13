@@ -19,7 +19,7 @@ class RestaurantDetailsViewModel : ViewModel() {
     a Restaurant object and initialize it with a null value until we finish
     executing the network request that retrieves it
      */
-    private val state = mutableStateOf<Restaurant?>(null)
+    val state = mutableStateOf<Restaurant?>(null)
 
     init {
         val retrofit: Retrofit =

@@ -4,7 +4,6 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
@@ -22,7 +21,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 @Composable
 fun RestaurantScreen() {
     val viewModel: RestaurantViewModel = viewModel()
-    LaunchedEffect(key1 = "request restaurants"){
+    LaunchedEffect(key1 = "request restaurants") {
         viewModel.getRestaurants()
     }
     viewModel.getRestaurants()
@@ -69,7 +68,7 @@ fun RestaurantItem(item: Restaurant, onClick: (id: Int) -> Unit) {
 
 
 @Composable
-private fun RestaurantIcon(icon: ImageVector, modifier: Modifier, onClick: () -> Unit = {}) {
+fun RestaurantIcon(icon: ImageVector, modifier: Modifier, onClick: () -> Unit = {}) {
     Image(
         imageVector = icon,
         contentDescription = "Restaurant icon",
@@ -80,9 +79,14 @@ private fun RestaurantIcon(icon: ImageVector, modifier: Modifier, onClick: () ->
 }
 
 @Composable
-private fun RestaurantDetails(title: String, item: String, modifier: Modifier) {
+fun RestaurantDetails(
+    title: String,
+    item: String,
+    modifier: Modifier,
+    horizontalAlignment: Alignment.Horizontal = Alignment.Start
+) {
 
-    Column(modifier = modifier) {
+    Column(modifier = modifier, horizontalAlignment = horizontalAlignment) {
         Text(
             text = title, style = MaterialTheme.typography.h6
         )
