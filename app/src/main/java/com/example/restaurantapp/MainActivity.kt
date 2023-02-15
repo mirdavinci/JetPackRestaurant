@@ -32,18 +32,19 @@ class MainActivity : ComponentActivity() {
 //}
 
 @Composable
-private fun RestaurantApp(){
+private fun RestaurantApp() {
     /*
     This composable function will act as the parent composable function of our
 Restaurants application. Here, all the screens of the app will be defined.
      */
 
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "restaurants"){
-        composable(route = "restaurants"){
+    NavHost(navController = navController, startDestination = "restaurants") {
+        composable(route = "restaurants") {
             RestaurantsScreen()
         }
-        composable(route = "restaurant/{restaurant_id}"){
+        composable(route = "restaurant/{restaurant_id}") {
+            RestaurantDetailsScreen()
         }
 
     }
