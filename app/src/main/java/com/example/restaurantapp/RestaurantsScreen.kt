@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
-fun RestaurantScreen() {
+fun RestaurantsScreen() {
     val viewModel: RestaurantViewModel = viewModel()
     LaunchedEffect(key1 = "request restaurants") {
         viewModel.getRestaurants()
